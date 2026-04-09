@@ -15,6 +15,11 @@ export interface CharacterRecord {
   description: string
   quote: string
   accent: string
+  fontFamily?: string
+  rotation?: number
+  scale?: number
+  fontWeight?: number | string
+  italic?: boolean
   searchTokens: string[]
   extensions: CharacterExtension[]
   featured?: boolean

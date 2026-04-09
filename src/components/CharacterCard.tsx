@@ -42,8 +42,17 @@ export function CharacterCard({ character, index, onSelect }: CharacterCardProps
       </div>
 
       <div className="mt-6 grid gap-4 md:gap-6 grid-cols-[minmax(6.5rem,8.5rem)_minmax(0,1fr)] items-end">
-        <div className="collection-display text-[5.5rem] leading-none text-[color:var(--accent)] md:text-[7.5rem] transition-transform duration-300 group-hover:scale-105 origin-bottom-left">
-          {character.char}
+        <div className="collection-display text-[5.5rem] leading-none text-[color:var(--accent)] md:text-[7.5rem] transition-transform duration-300 group-hover:scale-105 origin-bottom-left flex items-center justify-center">
+          <div
+            style={{
+              fontFamily: character.fontFamily || 'inherit',
+              transform: `rotate(${character.rotation || 0}deg) scale(${character.scale || 1})`,
+              fontWeight: character.fontWeight || 'normal',
+              fontStyle: character.italic ? 'italic' : 'normal',
+            }}
+          >
+            {character.char}
+          </div>
         </div>
         <div className="space-y-3 pb-2">
           <p className="text-sm tracking-[0.22em] text-[var(--ink-muted)]">

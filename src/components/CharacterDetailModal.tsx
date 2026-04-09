@@ -80,8 +80,17 @@ export function CharacterDetailModal({
                 <div className="section-kicker text-[color:color-mix(in_oklab,var(--paper)_72%,transparent)]">
                   {character.category}
                 </div>
-                <div className="collection-display text-[7rem] leading-none text-[color:var(--paper)] md:text-[11rem]">
-                  {character.char}
+                <div className="collection-display text-[7rem] leading-none text-[color:var(--paper)] md:text-[11rem] flex items-center justify-start">
+                  <div
+                    style={{
+                      fontFamily: character.fontFamily || 'inherit',
+                      transform: `rotate(${character.rotation || 0}deg) scale(${character.scale || 1})`,
+                      fontWeight: character.fontWeight || 'normal',
+                      fontStyle: character.italic ? 'italic' : 'normal',
+                    }}
+                  >
+                    {character.char}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <p className="text-sm tracking-[0.4em] text-[color:color-mix(in_oklab,var(--paper)_75%,transparent)]" aria-label={`拼音: ${character.pinyin}`}>
