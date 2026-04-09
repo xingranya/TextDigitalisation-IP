@@ -34,14 +34,15 @@ export function CharacterDetailModal({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
         onClick={onClose}
-        className="fixed inset-0 z-40 bg-[color:color-mix(in_oklab,var(--ink-strong)_12%,transparent)] backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-[color:color-mix(in_oklab,var(--ink-strong)_40%,transparent)]"
       />
 
       <div className="fixed inset-0 z-50 flex items-end justify-center px-3 pb-3 pt-10 md:items-center md:p-6">
         <motion.section
           layoutId={`card-${character.id}`}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           style={{ '--accent': character.accent } as CSSProperties}
-          className="detail-modal detail-scroll max-h-[92vh] w-full max-w-6xl overflow-y-auto"
+          className="detail-modal detail-scroll max-h-[92vh] w-full max-w-6xl overflow-y-auto bg-[var(--paper-strong)]"
         >
           <div className="grid min-h-full gap-0 lg:grid-cols-[minmax(20rem,0.94fr)_minmax(0,1.06fr)]">
             <div className="detail-stage">
@@ -49,21 +50,19 @@ export function CharacterDetailModal({
                 <div className="section-kicker text-[color:color-mix(in_oklab,var(--paper)_72%,transparent)]">
                   {character.category}
                 </div>
-                <motion.div
-                  layoutId={`glyph-${character.id}`}
-                  className="collection-display text-[7rem] leading-none text-[color:var(--paper)] md:text-[11rem]"
-                >
+                <div className="collection-display text-[7rem] leading-none text-[color:var(--paper)] md:text-[11rem]">
                   {character.char}
-                </motion.div>
+                </div>
                 <div className="flex items-center gap-3">
-                  <motion.p
-                    layoutId={`pinyin-${character.id}`}
-                    className="text-sm tracking-[0.4em] text-[color:color-mix(in_oklab,var(--paper)_75%,transparent)]"
-                  >
+                  <p className="text-sm tracking-[0.4em] text-[color:color-mix(in_oklab,var(--paper)_75%,transparent)]" aria-label={`拼音: ${character.pinyin}`}>
                     {character.pinyin}
-                  </motion.p>
-                  <button type="button" className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] bg-[color:color-mix(in_oklab,var(--paper)_10%,transparent)] text-[var(--paper)] transition hover:bg-[color:color-mix(in_oklab,var(--paper)_20%,transparent)]">
-                    <Volume2 className="h-4 w-4" />
+                  </p>
+                  <button 
+                    type="button" 
+                    aria-label="播放读音" 
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] bg-[color:color-mix(in_oklab,var(--paper)_10%,transparent)] text-[var(--paper)] transition hover:bg-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--paper)]"
+                  >
+                    <Volume2 aria-hidden="true" className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -83,16 +82,18 @@ export function CharacterDetailModal({
               <div className="absolute right-4 top-4 flex items-center gap-2 z-10">
                 <button
                   type="button"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-soft)] transition duration-300 hover:border-[var(--accent-red)] hover:text-[var(--ink-strong)]"
+                  aria-label="分享"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-soft)] transition duration-300 hover:border-[var(--accent-red)] hover:text-[var(--ink-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
                 >
-                  <Share2 className="h-4 w-4" />
+                  <Share2 aria-hidden="true" className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
+                  aria-label="关闭详情"
                   onClick={onClose}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-soft)] transition duration-300 hover:border-[var(--accent-red)] hover:text-[var(--ink-strong)]"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-soft)] transition duration-300 hover:border-[var(--accent-red)] hover:text-[var(--ink-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
                 >
-                  <X className="h-5 w-5" />
+                  <X aria-hidden="true" className="h-5 w-5" />
                 </button>
               </div>
 
@@ -151,17 +152,21 @@ export function CharacterDetailModal({
                 </div>
 
                 {/* 3D/AR Placeholder */}
-                <div className="relative overflow-hidden rounded-2xl border border-[var(--line-strong)] bg-[color:color-mix(in_oklab,var(--paper)_40%,white)] p-6 md:p-8 flex flex-col items-center justify-center min-h-[16rem] text-center group cursor-pointer">
+                <button 
+                  type="button" 
+                  aria-label="进入 3D 沉浸空间" 
+                  className="w-full relative overflow-hidden rounded-2xl border border-[var(--line-strong)] bg-[color:color-mix(in_oklab,var(--paper)_40%,white)] p-6 md:p-8 flex flex-col items-center justify-center min-h-[16rem] text-center group cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
+                >
                   <div className="absolute inset-0 bg-gradient-to-tr from-[color:color-mix(in_oklab,var(--accent)_8%,transparent)] to-transparent opacity-50 group-hover:opacity-100 transition duration-500" />
-                  <Box className="h-12 w-12 text-[color:var(--accent)] mb-4 animate-pulse" />
+                  <Box aria-hidden="true" className="h-12 w-12 text-[color:var(--accent)] mb-4 animate-pulse" />
                   <h3 className="text-lg font-medium text-[var(--ink-strong)] mb-2">3D 数字文物 / AR 互动</h3>
                   <p className="text-sm text-[var(--ink-soft)] max-w-sm">
                     点击进入沉浸式空间，全方位观赏相关荆楚文物模型，或使用 AR 投影至现实环境。
                   </p>
                   <span className="mt-6 inline-flex items-center gap-2 text-xs tracking-widest text-[color:var(--accent)] bg-[color:color-mix(in_oklab,var(--accent)_10%,transparent)] px-4 py-2 rounded-full font-bold uppercase group-hover:bg-[color:color-mix(in_oklab,var(--accent)_20%,transparent)] transition">
-                    立即体验 <ArrowRight className="h-3 w-3" />
+                    立即体验 <ArrowRight aria-hidden="true" className="h-3 w-3" />
                   </span>
-                </div>
+                </button>
 
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   {character.extensions.map((item) => (
@@ -187,7 +192,8 @@ export function CharacterDetailModal({
                       type="button"
                       key={item.id} 
                       onClick={() => onSelect(item.id)}
-                      className="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-[var(--line)] bg-[var(--paper)] hover:border-[var(--accent-red)] transition cursor-pointer group"
+                      aria-label={`查看相关汉字推荐：${item.char}`}
+                      className="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-[var(--line)] bg-[var(--paper)] hover:border-[var(--accent-red)] transition cursor-pointer group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
                     >
                       <div className="text-4xl font-serif text-[var(--ink-strong)] group-hover:text-[var(--accent-red)] transition">
                         {item.char}

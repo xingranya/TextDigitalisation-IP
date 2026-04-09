@@ -104,6 +104,12 @@
     color: var(--paper-strong);
   }
 
+  /* Accessible focus states globally */
+  *:focus-visible {
+    outline: 2px solid var(--accent-red);
+    outline-offset: 2px;
+  }
+
   #root {
     isolation: isolate;
   }
@@ -229,17 +235,15 @@
   .collection-card {
     position: relative;
     display: block;
-    min-height: 24rem;
+    min-height: 20rem;
     overflow: hidden;
-    border-radius: 2rem;
-    border: 1px solid color-mix(in oklab, var(--accent) 28%, var(--line));
+    border-radius: 1.5rem;
+    border: 1px solid color-mix(in oklab, var(--accent) 20%, var(--line));
     background:
       radial-gradient(circle at top right, color-mix(in oklab, var(--accent) 12%, transparent), transparent 30%),
       linear-gradient(180deg, color-mix(in oklab, var(--paper-strong) 94%, white), color-mix(in oklab, var(--accent) 4%, var(--paper)));
     padding: clamp(1.25rem, 2vw, 1.7rem);
-    box-shadow:
-      0 16px 32px color-mix(in oklab, var(--accent) 6%, transparent),
-      inset 0 1px 0 color-mix(in oklab, white 75%, transparent);
+    box-shadow: 0 8px 24px color-mix(in oklab, var(--accent) 4%, transparent);
     transition:
       transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
       box-shadow 320ms ease,
@@ -253,13 +257,13 @@
     z-index: 0;
     pointer-events: none;
     background-image: 
-      radial-gradient(color-mix(in oklab, var(--accent) 15%, transparent) 1px, transparent 1px),
-      radial-gradient(color-mix(in oklab, var(--accent) 10%, transparent) 1px, transparent 1px);
-    background-size: 24px 24px, 16px 16px;
-    background-position: 0 0, 12px 12px;
-    opacity: 0.4;
-    mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
-    transition: opacity 500ms ease;
+      radial-gradient(color-mix(in oklab, var(--accent) 15%, transparent) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: 0 0;
+    opacity: 0.3;
+    mask-image: linear-gradient(to bottom, transparent, black 30%, black 80%, transparent);
+    transition: opacity 300ms ease;
+    will-change: opacity;
   }
 
   .collection-card:hover::before {
@@ -273,20 +277,18 @@
 
   .collection-card:hover {
     transform: translateY(-4px);
-    border-color: color-mix(in oklab, var(--accent) 40%, var(--line-strong));
-    box-shadow:
-      0 22px 52px color-mix(in oklab, var(--accent) 14%, transparent),
-      inset 0 1px 0 color-mix(in oklab, white 75%, transparent);
+    border-color: color-mix(in oklab, var(--accent) 30%, var(--line-strong));
+    box-shadow: 0 16px 40px color-mix(in oklab, var(--accent) 10%, transparent);
   }
 
   .detail-modal {
     overflow: hidden;
-    border: 1px solid color-mix(in oklab, var(--accent) 24%, var(--line-strong));
-    border-radius: 2rem;
+    border: 1px solid color-mix(in oklab, var(--accent) 20%, var(--line-strong));
+    border-radius: 1.5rem;
     background: color-mix(in oklab, var(--paper-strong) 96%, white);
-    box-shadow:
-      0 36px 80px color-mix(in oklab, var(--ink-strong) 20%, transparent),
-      inset 0 1px 0 color-mix(in oklab, white 75%, transparent);
+    box-shadow: 0 24px 60px color-mix(in oklab, var(--ink-strong) 15%, transparent);
+    transform-origin: center;
+    will-change: transform, opacity;
   }
 
   .detail-stage {

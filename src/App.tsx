@@ -123,9 +123,9 @@ function App() {
         onSelect={setActiveCategory}
       />
 
-      <main className="mx-auto mt-8 w-full max-w-7xl px-5 pb-16 md:px-8 lg:px-12">
+      <main className="mx-auto mt-6 md:mt-8 w-full max-w-7xl px-5 pb-16 md:px-8 lg:px-12">
         {filteredCharacters.length > 0 ? (
-          <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <section className="grid gap-4 md:gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {filteredCharacters.map((character, index) => (
               <CharacterCard
                 key={character.id}
