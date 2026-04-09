@@ -29,6 +29,11 @@
     scroll-behavior: smooth;
   }
 
+  /* Handle FOUT smoothly: Wait for the beautiful web font, or gracefully fallback */
+  .collection-display {
+    font-display: block;
+  }
+
   body {
     min-height: 100vh;
     margin: 0;

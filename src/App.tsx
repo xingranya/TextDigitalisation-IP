@@ -4,6 +4,7 @@ import {
   useEffect,
   useEffectEvent,
   useState,
+  useRef,
 } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, ScrollText } from 'lucide-react'
@@ -23,6 +24,21 @@ function App() {
   const [searchTerm, setSearchTerm] = useState(initialState.query)
   const [activeCategory, setActiveCategory] = useState(initialState.category)
   const [selectedId, setSelectedId] = useState<string | null>(initialState.selectedId)
+  const [isOffline, setIsOffline] = useState(!navigator.onLine)
+  const searchTimeoutRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false)
+    const handleOffline = () => setIsOffline(true)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
 
   const deferredSearchTerm = useDeferredValue(searchTerm)
   const categories = ['全部', ...new Set(jingchuCharacters.map((item) => item.category))]
@@ -93,9 +109,18 @@ function App() {
   }, [activeCategory, searchTerm, selectedId])
 
   const handleQueryChange = (value: string) => {
-    startTransition(() => {
-      setSearchTerm(value)
-    })
+    // Basic sanitization: remove extreme special chars that might break regex or cause issues
+    const sanitizedValue = value.replace(/[^\w\s\u4e00-\u9fa5]/gi, '').slice(0, 50)
+    
+    if (searchTimeoutRef.current) {
+      window.clearTimeout(searchTimeoutRef.current)
+    }
+    
+    searchTimeoutRef.current = window.setTimeout(() => {
+      startTransition(() => {
+        setSearchTerm(sanitizedValue)
+      })
+    }, 150)
   }
 
   const handleKeywordSelect = (value: string) => {
@@ -107,6 +132,20 @@ function App() {
 
   return (
     <div className="min-h-screen pb-24 md:pb-0">
+      <AnimatePresence>
+        {isOffline && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="sticky top-0 z-50 flex items-center justify-center bg-[color:color-mix(in_oklab,var(--accent-red)_90%,black)] px-4 py-2 text-xs tracking-widest text-[var(--paper)]"
+            role="alert"
+          >
+            网络已断开，您正在查看本地缓存的导览数据
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <SearchHero
         query={searchTerm}
         total={jingchuCharacters.length}

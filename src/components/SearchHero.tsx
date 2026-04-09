@@ -1,5 +1,6 @@
 import { LibraryBig, Search, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 
 interface SearchHeroProps {
   query: string
@@ -23,6 +24,19 @@ export function SearchHero({
   onQueryChange,
   onKeywordSelect,
 }: SearchHeroProps) {
+  const [inputValue, setInputValue] = useState(query)
+
+  // Sync local input with prop if it changes externally
+  useEffect(() => {
+    setInputValue(query)
+  }, [query])
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const val = event.target.value
+    setInputValue(val)
+    onQueryChange(val)
+  }
+
   return (
     <header className="mx-auto grid w-full max-w-7xl gap-6 px-5 pb-8 pt-6 md:gap-12 md:px-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.6fr)] lg:px-12 lg:pt-12">
       <motion.div
@@ -52,8 +66,8 @@ export function SearchHero({
             <input
               id="character-search"
               type="search"
-              value={query}
-              onChange={(event) => onQueryChange(event.target.value)}
+              value={inputValue}
+              onChange={handleInputChange}
               className="w-full rounded-[1.35rem] border border-[var(--line-strong)] bg-[color:var(--paper-strong)] px-12 py-4 text-base text-[var(--ink-strong)] outline-none transition duration-300 placeholder:text-[var(--ink-muted)] focus:border-[var(--accent-red)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] focus:shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent-red)_10%,transparent)]"
               placeholder="输入汉字或拼音，寻找你的楚地印记"
               aria-label="搜索荆楚文字或拼音"

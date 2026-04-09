@@ -18,4 +18,5 @@ export interface CharacterRecord {
   searchTokens: string[]
   extensions: CharacterExtension[]
   featured?: boolean
+  images?: string[]
 }

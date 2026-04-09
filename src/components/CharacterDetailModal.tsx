@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { MapPinned, Sparkles, X, Volume2, Share2, Box, ArrowRight } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
 import type { CharacterRecord } from '../types/character'
 import { jingchuCharacters } from '../data/characters'
 
@@ -10,11 +11,40 @@ interface CharacterDetailModalProps {
   onSelect: (id: string) => void
 }
 
+function ImageWithSkeleton({ src, alt, accentColor }: { src: string, alt: string, accentColor: string }) {
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  return (
+    <div 
+      className="relative w-full overflow-hidden rounded-xl bg-[color:color-mix(in_oklab,var(--accent)_10%,var(--paper))]" 
+      style={{ aspectRatio: '1/1', '--accent': accentColor } as CSSProperties}
+    >
+      <AnimatePresence>
+        {!isLoaded && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 animate-pulse bg-[color:color-mix(in_oklab,var(--accent)_15%,var(--paper))]"
+          />
+        )}
+      </AnimatePresence>
+      <img 
+        src={src} 
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setIsLoaded(true)}
+        className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+      />
+    </div>
+  )
+}
 export function CharacterDetailModal({
   character,
   onClose,
   onSelect,
 }: CharacterDetailModalProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const isTextLong = character.description.length > 120
   // Get 3 related characters (same category or just fallback to some featured ones)
   const related = jingchuCharacters
     .filter((item) => item.id !== character.id && item.category === character.category)
@@ -135,9 +165,23 @@ export function CharacterDetailModal({
                 className="space-y-4"
               >
                 <div className="section-kicker">文化介绍</div>
-                <p className="max-w-[42rem] text-base leading-8 text-[var(--ink-soft)]">
-                  {character.description}
-                </p>
+                <div className="relative">
+                  <p className={`max-w-[42rem] text-base leading-8 text-[var(--ink-soft)] transition-all duration-300 ${!isExpanded && isTextLong ? 'line-clamp-4' : ''}`}>
+                    {character.description}
+                  </p>
+                  {!isExpanded && isTextLong && (
+                    <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[var(--paper-strong)] to-transparent" />
+                  )}
+                </div>
+                {isTextLong && (
+                  <button 
+                    type="button" 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="text-sm font-medium tracking-widest text-[color:var(--accent)] hover:text-[color:color-mix(in_oklab,var(--accent)_60%,var(--ink-strong))] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+                  >
+                    {isExpanded ? '收起内容' : '阅读更多'}
+                  </button>
+                )}
               </motion.article>
 
               <motion.section 
@@ -176,6 +220,22 @@ export function CharacterDetailModal({
                     </article>
                   ))}
                 </div>
+
+                {character.images && character.images.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.5 }}
+                    className="mt-8 space-y-4"
+                  >
+                    <h4 className="text-sm font-medium tracking-widest text-[color:var(--accent)] uppercase">相关文创图集</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {character.images.map((img, i) => (
+                        <ImageWithSkeleton key={i} src={img} alt={`${character.char} 相关文创 ${i+1}`} accentColor={character.accent} />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
               </motion.section>
 
               {/* 相关推荐 */}
