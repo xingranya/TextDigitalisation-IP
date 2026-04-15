@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { Copy, Sparkles, Square } from 'lucide-react'
+import { Copy, Sparkles, Square, Wand2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { CharacterRecord } from '../types/character'
 import { readAIConfig } from '../lib/ai-config'
@@ -130,8 +130,10 @@ export function CharacterAIGuide({ character }: { character: CharacterRecord }) 
     <section className="paper-panel p-4 md:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-[var(--accent-bronze)]" />
-          <div className="section-kicker">AI 导读</div>
+          <div className="ai-guide-mark">
+            <Sparkles className="h-4 w-4" />
+            <div className="section-kicker text-[color:color-mix(in_oklab,var(--accent-bronze)_75%,var(--ink-strong))]">AI 导读</div>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {status === 'loading' ? (
@@ -148,9 +150,10 @@ export function CharacterAIGuide({ character }: { character: CharacterRecord }) 
               type="button"
               onClick={runGuide}
               disabled={!canRun}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--line-strong)] bg-[color:color-mix(in_oklab,var(--paper-strong)_90%,white)] px-4 py-2 text-xs font-medium tracking-widest text-[var(--ink-strong)] transition hover:border-[var(--accent-red)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ai-guide-cta focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
             >
-              生成导读
+              <Wand2 aria-hidden="true" className="h-4 w-4" />
+              一键生成导读
             </button>
           )}
           <button

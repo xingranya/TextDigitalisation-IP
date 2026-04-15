@@ -1,4 +1,4 @@
-import { LibraryBig, Search, Sparkles } from 'lucide-react'
+import { LibraryBig, Search, Sparkles, Wand2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 
@@ -94,11 +94,12 @@ export function SearchHero({
             ))}
             <button
               type="button"
-              className="keyword-chip border-[color:color-mix(in_oklab,var(--accent-bronze)_35%,var(--line-strong))] bg-[color:color-mix(in_oklab,var(--accent-bronze)_10%,var(--paper))] text-[var(--ink-strong)] hover:border-[var(--accent-bronze)] hover:text-[var(--accent-bronze)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
+              className="ai-entry-chip focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
               onClick={onOpenAIChat}
               aria-label="打开 AI 问答"
             >
-              问 AI
+              <Wand2 aria-hidden="true" className="h-4 w-4" />
+              问 AI 选字
             </button>
           </div>
         </div>

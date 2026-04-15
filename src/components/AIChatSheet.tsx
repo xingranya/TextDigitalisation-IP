@@ -20,6 +20,24 @@ const parseRecommendedChars = (text: string) => {
     .filter((value) => value.length === 1)
 }
 
+const normalizeQuestionForAI = (value: string) => {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return ''
+  }
+
+  const normalized = trimmed.replace(/\s+/g, '')
+  const smallTalk = ['你好', '您好', '在吗', '在不在', 'hi', 'hello', '谢谢', '谢了'].some((item) =>
+    normalized.toLowerCase().includes(item),
+  )
+
+  if (smallTalk && normalized.length <= 6) {
+    return `${trimmed}（用户在打招呼或寒暄）`
+  }
+
+  return trimmed
+}
+
 export interface AIChatSheetProps {
   isOpen: boolean
   onClose: () => void
@@ -120,6 +138,8 @@ export function AIChatSheet({ isOpen, onClose, characters, onPickCharacter }: AI
       return
     }
 
+    const questionForAI = normalizeQuestionForAI(trimmed)
+
     controllerRef.current?.abort()
     controllerRef.current = new AbortController()
     setStatus('loading')
@@ -127,7 +147,7 @@ export function AIChatSheet({ isOpen, onClose, characters, onPickCharacter }: AI
     setAnswer('')
 
     const buffer: string[] = []
-    const messages = buildQAMessages(trimmed, characters)
+    const messages = buildQAMessages(questionForAI, characters)
 
     try {
       for await (const delta of streamChatCompletion({
@@ -305,4 +325,3 @@ export function AIChatSheet({ isOpen, onClose, characters, onPickCharacter }: AI
     </AnimatePresence>
   )
 }
-

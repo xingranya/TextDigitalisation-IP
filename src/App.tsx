@@ -15,6 +15,7 @@ import { CharacterDetailModal } from './components/CharacterDetailModal'
 import { MobileTabBar } from './components/MobileTabBar'
 import { Footer } from './components/Footer'
 import { AIChatSheet } from './components/AIChatSheet'
+import { AIFloatingLauncher } from './components/AIFloatingLauncher'
 import { jingchuCharacters } from './data/characters'
 import { filterCharacters } from './lib/filter-characters'
 import { readBrowserState, writeBrowserState } from './lib/url-state'
@@ -329,6 +330,7 @@ function App() {
       />
       <Footer />
       <MobileTabBar onOpenAIChat={handleOpenAIChat} />
+      <AIFloatingLauncher onOpen={handleOpenAIChat} />
     </div>
   )
 }
