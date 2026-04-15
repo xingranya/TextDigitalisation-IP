@@ -29,6 +29,8 @@ function App() {
   const [isAIChatOpen, setIsAIChatOpen] = useState(false)
   const [isOffline, setIsOffline] = useState(!navigator.onLine)
   const searchTimeoutRef = useRef<number | null>(null)
+  const modalTriggerRef = useRef<HTMLElement | null>(null)
+  const aiTriggerRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false)
@@ -44,6 +46,15 @@ function App() {
   }, [])
 
   const deferredSearchTerm = useDeferredValue(searchTerm)
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        window.clearTimeout(searchTimeoutRef.current)
+        searchTimeoutRef.current = null
+      }
+    }
+  }, [])
+
   const categories = ['全部', ...new Set(jingchuCharacters.map((item) => item.category))]
   const filteredCharacters = filterCharacters(
     jingchuCharacters,
@@ -79,10 +90,40 @@ function App() {
     return result
   }, {})
 
+  const focusBack = (element: HTMLElement | null) => {
+    if (!element) return
+    window.setTimeout(() => {
+      element.focus()
+    }, 0)
+  }
+
+  const handleCloseCharacter = () => {
+    setSelectedId(null)
+    focusBack(modalTriggerRef.current)
+  }
+
+  const handleOpenCharacter = (id: string) => {
+    if (!selectedId) {
+      modalTriggerRef.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null
+    }
+    setSelectedId(id)
+  }
+
+  const handleCloseAIChat = () => {
+    setIsAIChatOpen(false)
+    focusBack(aiTriggerRef.current)
+  }
+
   const handleEscape = useEffectEvent((event: KeyboardEvent) => {
     if (event.key === 'Escape') {
-      setSelectedId(null)
-      setIsAIChatOpen(false)
+      if (selectedId) {
+        handleCloseCharacter()
+        return
+      }
+      if (isAIChatOpen) {
+        handleCloseAIChat()
+      }
     }
   })
 
@@ -141,11 +182,9 @@ function App() {
   }
 
   const handleOpenAIChat = () => {
+    aiTriggerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null
     setIsAIChatOpen(true)
-  }
-
-  const handleCloseAIChat = () => {
-    setIsAIChatOpen(false)
   }
 
   const handlePickCharacterFromAI = (char: string) => {
@@ -153,6 +192,7 @@ function App() {
     if (!match) {
       return
     }
+    modalTriggerRef.current = aiTriggerRef.current
     setSelectedId(match.id)
   }
 
@@ -197,7 +237,7 @@ function App() {
                 key={character.id}
                 character={character}
                 index={index}
-                onSelect={setSelectedId}
+                onSelect={handleOpenCharacter}
               />
             ))}
           </section>
@@ -317,8 +357,8 @@ function App() {
         {selectedCharacter ? (
           <CharacterDetailModal
             character={selectedCharacter}
-            onClose={() => setSelectedId(null)}
-            onSelect={setSelectedId}
+            onClose={handleCloseCharacter}
+            onSelect={handleOpenCharacter}
           />
         ) : null}
       </AnimatePresence>

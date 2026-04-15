@@ -14,7 +14,7 @@ export function CategoryRail({
   onSelect,
 }: CategoryRailProps) {
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 md:px-8 lg:px-12">
+    <section className="mx-auto w-full max-w-7xl px-5 md:px-8 lg:px-12" aria-label="分类筛选">
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
@@ -29,6 +29,7 @@ export function CategoryRail({
               key={category}
               type="button"
               onClick={() => onSelect(category)}
+              aria-pressed={isActive}
               className={`filter-chip ${isActive ? 'filter-chip-active' : ''}`}
             >
               <span>{category}</span>

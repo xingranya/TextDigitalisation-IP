@@ -78,8 +78,12 @@ export function SearchHero({
             />
           </div>
           <div className="flex flex-wrap gap-2" aria-label="搜索建议">
-            <span className="sr-only" aria-live="polite">
-              {filteredTotal > 0 ? `找到了 ${filteredTotal} 个结果` : '没有找到匹配的字符'}
+            <span className="sr-only" aria-live="polite" aria-atomic="true">
+              {query.trim()
+                ? filteredTotal > 0
+                  ? `找到了 ${filteredTotal} 个结果`
+                  : '没有找到匹配的字符'
+                : ''}
             </span>
             {keywordSuggestions.map((item) => (
               <button

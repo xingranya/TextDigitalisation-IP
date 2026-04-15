@@ -362,7 +362,7 @@ export function CharacterDetailModal({
                 className="mt-8 space-y-5 border-t border-[var(--line-strong)] pt-8"
               >
                 <div className="section-kicker">相关推荐</div>
-                <div className="grid gap-4 grid-cols-3">
+                <div className="grid gap-4 grid-cols-2 sm:grid-cols-3">
                   {related.map(item => (
                     <button 
                       type="button"

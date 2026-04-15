@@ -16,17 +16,17 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="tracking-[0.2em] text-[var(--ink-muted)]">文化矩阵</h3>
             <ul className="space-y-3 text-[var(--ink-soft)]">
-              <li><button className="hover:text-[var(--accent-red)]">荆楚青铜馆</button></li>
-              <li><button className="hover:text-[var(--accent-red)]">楚漆器数字展</button></li>
-              <li><button className="hover:text-[var(--accent-red)]">楚辞声音体验</button></li>
+              <li><span>荆楚青铜馆</span></li>
+              <li><span>楚漆器数字展</span></li>
+              <li><span>楚辞声音体验</span></li>
             </ul>
           </div>
           <div className="space-y-4">
             <h3 className="tracking-[0.2em] text-[var(--ink-muted)]">联系我们</h3>
             <ul className="space-y-3 text-[var(--ink-soft)]">
-              <li><button className="hover:text-[var(--accent-red)]">机构合作</button></li>
-              <li><button className="hover:text-[var(--accent-red)]">文创授权</button></li>
-              <li><button className="hover:text-[var(--accent-red)]">意见反馈</button></li>
+              <li><span>机构合作</span></li>
+              <li><span>文创授权</span></li>
+              <li><span>意见反馈</span></li>
             </ul>
           </div>
         </div>
@@ -35,8 +35,8 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--line)] pt-8 text-xs text-[var(--ink-muted)] md:flex-row">
           <p>© 2026 数字荆楚文化发展中心. 保留所有权利.</p>
           <div className="flex gap-4">
-            <button className="hover:text-[var(--ink-strong)]">隐私政策</button>
-            <button className="hover:text-[var(--ink-strong)]">服务条款</button>
+            <span>隐私政策</span>
+            <span>服务条款</span>
           </div>
         </div>
       </div>
