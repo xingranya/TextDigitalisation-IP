@@ -11,6 +11,10 @@ interface CharacterDetailModalProps {
   character: CharacterRecord
   onClose: () => void
   onSelect: (id: string) => void
+  onEnterImmersive: (id: string) => void
+  favorites: string[]
+  onToggleFavorite: (id: string) => void
+  pushToast: (message: string) => void
 }
 
 function ImageWithSkeleton({ src, alt, accentColor }: { src: string, alt: string, accentColor: string }) {
@@ -44,8 +48,13 @@ export function CharacterDetailModal({
   character,
   onClose,
   onSelect,
+  onEnterImmersive,
+  favorites,
+  onToggleFavorite,
+  pushToast,
 }: CharacterDetailModalProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const dialogTitleId = useId()
   const dialogDescriptionId = useId()
   const dialogRef = useRef<HTMLElement | null>(null)
@@ -66,6 +75,12 @@ export function CharacterDetailModal({
     related.push(...fallbacks)
   }
 
+  const isFavorite = favorites.includes(character.id)
+  const speechSupported =
+    typeof window !== 'undefined' &&
+    typeof window.speechSynthesis !== 'undefined' &&
+    typeof window.SpeechSynthesisUtterance !== 'undefined'
+
   const focusableSelector = useMemo(
     () =>
       [
@@ -82,6 +97,81 @@ export function CharacterDetailModal({
   useEffect(() => {
     closeButtonRef.current?.focus()
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (!speechSupported) {
+        return
+      }
+      window.speechSynthesis.cancel()
+    }
+  }, [speechSupported])
+
+  useEffect(() => {
+    if (!speechSupported) {
+      return
+    }
+    window.speechSynthesis.cancel()
+    setIsSpeaking(false)
+  }, [character.id, speechSupported])
+
+  const handleSpeak = () => {
+    if (!speechSupported) {
+      pushToast('当前浏览器暂不支持语音朗读')
+      return
+    }
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel()
+      setIsSpeaking(false)
+      return
+    }
+
+    const utterance = new window.SpeechSynthesisUtterance(`${character.char}。${character.pinyin}`)
+    utterance.lang = 'zh-CN'
+    utterance.rate = 0.9
+    utterance.onend = () => {
+      setIsSpeaking(false)
+    }
+    utterance.onerror = () => {
+      setIsSpeaking(false)
+      pushToast('语音朗读失败，请稍后再试')
+    }
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(utterance)
+    setIsSpeaking(true)
+  }
+
+  const getShareUrl = () => {
+    const params = new URLSearchParams()
+    params.set('char', character.id)
+    return `${window.location.origin}${window.location.pathname}?${params.toString()}`
+  }
+
+  const handleShare = async () => {
+    const url = getShareUrl()
+    const title = `荆楚字韵｜${character.char} ${character.title}`
+    const text = character.summary
+
+    if (typeof navigator !== 'undefined' && 'share' in navigator) {
+      try {
+        await (navigator as Navigator & { share: (data: any) => Promise<void> }).share({
+          title,
+          text,
+          url,
+        })
+        pushToast('已打开系统分享面板')
+        return
+      } catch {}
+    }
+
+    try {
+      await navigator.clipboard.writeText(url)
+      pushToast('链接已复制，可以直接粘贴分享')
+    } catch {
+      pushToast('复制失败，请手动复制地址栏链接')
+    }
+  }
 
   const handleDialogKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
     if (event.key !== 'Tab') {
@@ -187,7 +277,8 @@ export function CharacterDetailModal({
                   </p>
                   <button 
                     type="button" 
-                    aria-label="播放读音" 
+                    aria-label={isSpeaking ? '停止朗读' : '播放读音'} 
+                    onClick={handleSpeak}
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] bg-[color:color-mix(in_oklab,var(--paper)_10%,transparent)] text-[var(--paper)] transition hover:bg-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--paper)]"
                   >
                     <Volume2 aria-hidden="true" className="h-4 w-4" />
@@ -210,7 +301,16 @@ export function CharacterDetailModal({
               <div className="absolute right-4 top-4 flex items-center gap-2 z-10">
                 <button
                   type="button"
+                  aria-label={isFavorite ? '取消收藏' : '收藏'}
+                  onClick={() => onToggleFavorite(character.id)}
+                  className={`inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] transition duration-300 hover:border-[var(--accent-red)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] ${isFavorite ? 'text-[var(--accent-red)]' : 'text-[var(--ink-soft)] hover:text-[var(--ink-strong)]'}`}
+                >
+                  <Sparkles aria-hidden="true" className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
                   aria-label="分享"
+                  onClick={handleShare}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-soft)] transition duration-300 hover:border-[var(--accent-red)] hover:text-[var(--ink-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
                 >
                   <Share2 aria-hidden="true" className="h-4 w-4" />
@@ -315,6 +415,9 @@ export function CharacterDetailModal({
                 <button 
                   type="button" 
                   aria-label="进入 3D 沉浸空间" 
+                  onClick={() => {
+                    onEnterImmersive(character.id)
+                  }}
                   className="w-full relative overflow-hidden rounded-2xl border border-[var(--line-strong)] bg-[color:color-mix(in_oklab,var(--paper)_40%,white)] p-6 md:p-8 flex flex-col items-center justify-center min-h-[16rem] text-center group cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-tr from-[color:color-mix(in_oklab,var(--accent)_8%,transparent)] to-transparent opacity-50 group-hover:opacity-100 transition duration-500" />
@@ -380,9 +483,9 @@ export function CharacterDetailModal({
                     </button>
                   ))}
                 </div>
-                </motion.section>
+              </motion.section>
 
-                <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 {character.searchTokens.map((token) => (
                   <span key={token} className="detail-chip">
                     {token}

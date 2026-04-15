@@ -32,10 +32,39 @@ const normalizeQuestionForAI = (value: string) => {
   )
 
   if (smallTalk && normalized.length <= 6) {
-    return `${trimmed}（用户在打招呼或寒暄）`
+    return trimmed
   }
 
   return trimmed
+}
+
+const isSmallTalk = (value: string) => {
+  const normalized = value.trim().replace(/\s+/g, '')
+  if (!normalized) return false
+  const hit = ['你好', '您好', '在吗', '在不在', 'hi', 'hello', '谢谢', '谢了'].some((item) =>
+    normalized.toLowerCase().includes(item),
+  )
+  return hit && normalized.length <= 6
+}
+
+const pickIntroChars = (characters: CharacterRecord[]) => {
+  const preferred = ['荆', '楚', '钟']
+  const found: string[] = []
+  preferred.forEach((char) => {
+    if (found.includes(char)) return
+    if (characters.some((item) => item.char === char)) {
+      found.push(char)
+    }
+  })
+  if (found.length >= 3) return found.slice(0, 3)
+  characters.some((item) => {
+    if (found.length >= 3) return true
+    if (item.char && item.char.length === 1 && !found.includes(item.char)) {
+      found.push(item.char)
+    }
+    return false
+  })
+  return found.slice(0, 3)
 }
 
 export interface AIChatSheetProps {
@@ -135,6 +164,19 @@ export function AIChatSheet({ isOpen, onClose, characters, onPickCharacter }: AI
 
     const trimmed = question.trim()
     if (!trimmed) {
+      return
+    }
+
+    if (isSmallTalk(trimmed)) {
+      const picks = pickIntroChars(characters)
+      const answerText = [
+        `【推荐】${picks.join('|')}`,
+        '【理由】你好！如果你只是想先随便逛逛，这三个字很适合作为入口：一个看地域气场，一个看城市记忆，一个听礼乐回响。它们风格差异明显，能帮你快速摸清整个平台的脉络。',
+        '【下一步】建议先点“荆”进入详情页，从母题与图集开始看；如果想更偏器物或姓氏，也可以再切换分类继续探索。',
+      ].join('\n')
+      setAnswer(answerText)
+      setStatus('done')
+      setErrorMessage(null)
       return
     }
 

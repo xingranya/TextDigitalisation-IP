@@ -1,4 +1,7 @@
+export type AppPage = 'home' | 'shop' | 'profile' | 'immersive'
+
 export interface BrowserState {
+  page: AppPage
   query: string
   category: string
   selectedId: string | null
@@ -6,8 +9,12 @@ export interface BrowserState {
 
 export const readBrowserState = (): BrowserState => {
   const params = new URLSearchParams(window.location.search)
+  const rawPage = params.get('page')
+  const page: AppPage =
+    rawPage === 'shop' || rawPage === 'profile' || rawPage === 'immersive' ? rawPage : 'home'
 
   return {
+    page,
     query: params.get('q') ?? '',
     category: params.get('cat') ?? '全部',
     selectedId: params.get('char'),
@@ -16,6 +23,10 @@ export const readBrowserState = (): BrowserState => {
 
 export const writeBrowserState = (state: BrowserState) => {
   const params = new URLSearchParams()
+
+  if (state.page && state.page !== 'home') {
+    params.set('page', state.page)
+  }
 
   if (state.query) {
     params.set('q', state.query)
