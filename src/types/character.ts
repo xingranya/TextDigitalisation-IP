@@ -15,6 +15,7 @@ export interface CharacterRecord {
   description: string
   quote: string
   accent: string
+  priority?: number
   fontFamily?: string
   rotation?: number
   scale?: number

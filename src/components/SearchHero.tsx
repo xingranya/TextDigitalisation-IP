@@ -49,7 +49,9 @@ export function SearchHero({
           <div className="section-kicker">数字荆楚·字韵游园</div>
           <div className="max-w-4xl space-y-3 md:space-y-5">
             <h1 className="collection-display text-[clamp(2.8rem,7vw,7.6rem)] leading-[0.92] tracking-[0.08em] text-[var(--ink-strong)]">
-              荆楚<span className="text-[var(--accent-red)]">字</span>韵
+              <span className="hero-title-ink">荆楚</span>
+              <span className="hero-title-brush text-[var(--accent-red)]">字</span>
+              <span className="hero-title-seal">韵</span>
             </h1>
             <p className="max-w-2xl text-sm leading-7 text-[var(--ink-soft)] md:text-lg md:leading-8">
               探索楚地两千年的浪漫与瑰丽。扫码进入这片云梦大泽，每一笔画皆是青铜与漆木的低语。

@@ -4,7 +4,9 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-2 md:px-8 lg:px-12">
         <div className="space-y-4">
           <div className="collection-display text-2xl tracking-widest text-[var(--ink-strong)]">
-            荆楚字韵
+            <span className="hero-title-ink">荆楚</span>
+            <span className="hero-title-brush text-[var(--accent-red)]">字</span>
+            <span className="hero-title-seal">韵</span>
           </div>
           <p className="max-w-[24rem] text-sm leading-7 text-[var(--ink-soft)]">
             本平台致力于通过数字化技术，重塑荆楚文字的视觉表现，让历史文化在现代数字空间中焕发新的生命力。

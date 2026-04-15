@@ -45,6 +45,11 @@ export function CharacterDetailModal({
 }: CharacterDetailModalProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const isTextLong = character.description.length > 120
+  const hasImage = Boolean(character.images && character.images.length > 0)
+  const rawRotation = character.rotation ?? 0
+  const rotation = hasImage ? 0 : Math.max(-2, Math.min(2, rawRotation))
+  const rawScale = character.scale ?? 1
+  const scale = hasImage ? 1 : Math.max(0.92, Math.min(1.1, rawScale))
   // Get 3 related characters (same category or just fallback to some featured ones)
   const related = jingchuCharacters
     .filter((item) => item.id !== character.id && item.category === character.category)
@@ -81,16 +86,32 @@ export function CharacterDetailModal({
                   {character.category}
                 </div>
                 <div className="collection-display text-[7rem] leading-none text-[color:var(--paper)] md:text-[11rem] flex items-center justify-start">
-                  <div
-                    style={{
-                      fontFamily: character.fontFamily || 'inherit',
-                      transform: `rotate(${character.rotation || 0}deg) scale(${character.scale || 1})`,
-                      fontWeight: character.fontWeight || 'normal',
-                      fontStyle: character.italic ? 'italic' : 'normal',
-                    }}
-                  >
-                    {character.char}
-                  </div>
+                  {character.images && character.images.length > 0 ? (
+                    <div className="ip-char-hero-frame">
+                      <img
+                        src={character.images[0]}
+                        alt={`${character.char} 艺术字`}
+                        loading="lazy"
+                        style={{
+                          transform: `rotate(${rotation}deg) scale(${scale})`,
+                          transformOrigin: '50% 50%',
+                        }}
+                        className="ip-char-hero-image"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        fontFamily: character.fontFamily || 'inherit',
+                        transform: `rotate(${rotation}deg) scale(${scale})`,
+                        transformOrigin: '50% 60%',
+                        fontWeight: character.fontWeight || 'normal',
+                        fontStyle: character.italic ? 'italic' : 'normal',
+                      }}
+                    >
+                      {character.char}
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <p className="text-sm tracking-[0.4em] text-[color:color-mix(in_oklab,var(--paper)_75%,transparent)]" aria-label={`拼音: ${character.pinyin}`}>
@@ -153,13 +174,17 @@ export function CharacterDetailModal({
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.25 }}
-                className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+                className="grid gap-4 md:grid-cols-2"
               >
                 <div className="paper-panel p-4 hover:border-[color:var(--accent)] transition-colors duration-300">
                   <div className="section-kicker">文化母题</div>
                   <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)]">{character.motif}</p>
                 </div>
                 <div className="paper-panel p-4 hover:border-[color:var(--accent)] transition-colors duration-300">
+                  <div className="section-kicker">短摘要</div>
+                  <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)]">{character.summary}</p>
+                </div>
+                <div className="paper-panel p-4 hover:border-[color:var(--accent)] transition-colors duration-300 md:col-span-2">
                   <div className="section-kicker">适合场景</div>
                   <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)]">
                     适合景区扫码导览、数字展览页、城市伴手礼、电商文创详情页等场景。
@@ -175,9 +200,9 @@ export function CharacterDetailModal({
               >
                 <div className="section-kicker">文化介绍</div>
                 <div className="relative">
-                  <p className={`max-w-[42rem] text-base leading-8 text-[var(--ink-soft)] transition-all duration-300 ${!isExpanded && isTextLong ? 'line-clamp-4' : ''}`}>
+                  <div className={`max-w-[42rem] text-base leading-8 text-[var(--ink-soft)] whitespace-pre-line transition-all duration-300 ${!isExpanded && isTextLong ? 'line-clamp-6' : ''}`}>
                     {character.description}
-                  </p>
+                  </div>
                   {!isExpanded && isTextLong && (
                     <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[var(--paper-strong)] to-transparent" />
                   )}
@@ -230,7 +255,7 @@ export function CharacterDetailModal({
                   ))}
                 </div>
 
-                {character.images && character.images.length > 0 && (
+                {character.images && character.images.length > 1 && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -239,7 +264,7 @@ export function CharacterDetailModal({
                   >
                     <h4 className="text-sm font-medium tracking-widest text-[color:var(--accent)] uppercase">相关文创图集</h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {character.images.map((img, i) => (
+                      {character.images.slice(1).map((img, i) => (
                         <ImageWithSkeleton key={i} src={img} alt={`${character.char} 相关文创 ${i+1}`} accentColor={character.accent} />
                       ))}
                     </div>

@@ -142,6 +142,78 @@
     font-weight: 700;
   }
 
+  .hero-title-ink {
+    font-family: 'ZCOOL XiaoWei', var(--font-display);
+    letter-spacing: 0.12em;
+    text-shadow:
+      0 1px 0 color-mix(in oklab, var(--paper-strong) 70%, transparent),
+      0 14px 36px color-mix(in oklab, var(--ink-strong) 12%, transparent);
+  }
+
+  .hero-title-brush {
+    font-family: 'Zhi Mang Xing', cursive;
+    letter-spacing: 0.02em;
+    text-shadow:
+      0 0 0.04em color-mix(in oklab, var(--ink-strong) 18%, transparent),
+      0 16px 40px color-mix(in oklab, var(--accent-red) 14%, transparent);
+  }
+
+  .hero-title-seal {
+    font-family: 'ZCOOL QingKe HuangYou', var(--font-display);
+    letter-spacing: 0.08em;
+    text-shadow:
+      0 1px 0 color-mix(in oklab, var(--paper-strong) 60%, transparent),
+      0 14px 34px color-mix(in oklab, var(--ink-strong) 10%, transparent);
+  }
+
+  .ip-char-frame {
+    display: grid;
+    place-items: center;
+    width: min(8.2rem, 100%);
+    border-radius: 1.35rem;
+    border: 1px solid color-mix(in oklab, var(--accent) 20%, var(--line));
+    background:
+      radial-gradient(circle at top left, color-mix(in oklab, var(--accent) 12%, transparent), transparent 60%),
+      linear-gradient(180deg, color-mix(in oklab, var(--paper-strong) 92%, white), color-mix(in oklab, var(--accent) 4%, var(--paper)));
+    padding: 0.75rem;
+    box-shadow:
+      0 14px 28px color-mix(in oklab, var(--accent) 10%, transparent),
+      inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
+  }
+
+  .ip-char-image {
+    height: 6.1rem;
+    width: auto;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    opacity: 0.96;
+    filter: drop-shadow(0 18px 26px color-mix(in oklab, var(--accent) 16%, transparent));
+  }
+
+  .ip-char-hero-frame {
+    display: grid;
+    place-items: center;
+    max-width: 100%;
+    border-radius: 1.7rem;
+    border: 1px solid color-mix(in oklab, var(--paper-strong) 65%, transparent);
+    background:
+      radial-gradient(circle at top left, color-mix(in oklab, var(--accent) 10%, transparent), transparent 60%),
+      linear-gradient(180deg, color-mix(in oklab, var(--paper-strong) 92%, white), color-mix(in oklab, var(--accent) 4%, var(--paper)));
+    padding: 1rem;
+    box-shadow:
+      0 18px 46px color-mix(in oklab, black 22%, transparent),
+      inset 0 1px 0 color-mix(in oklab, white 16%, transparent);
+  }
+
+  .ip-char-hero-image {
+    max-height: 9.6rem;
+    width: auto;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    opacity: 0.96;
+    filter: drop-shadow(0 20px 34px color-mix(in oklab, black 18%, transparent));
+  }
+
   .keyword-chip {
     display: inline-flex;
     align-items: center;
@@ -349,6 +421,14 @@
 @media (max-width: 767px) {
   :root {
     --paper: oklch(0.975 0.01 82);
+  }
+
+  .ip-char-image {
+    height: 5.5rem;
+  }
+
+  .ip-char-hero-image {
+    max-height: 8.2rem;
   }
 
   .collection-card {

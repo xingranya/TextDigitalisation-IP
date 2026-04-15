@@ -47,8 +47,14 @@ function App() {
     deferredSearchTerm,
     activeCategory,
   ).sort((a, b) => {
-    // Sort featured items first when there's no search query
     if (!deferredSearchTerm) {
+      const aPriority = a.priority ?? 0
+      const bPriority = b.priority ?? 0
+
+      if (bPriority !== aPriority) {
+        return bPriority - aPriority
+      }
+
       if (a.featured && !b.featured) return -1
       if (!a.featured && b.featured) return 1
     }

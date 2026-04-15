@@ -11,6 +11,11 @@ interface CharacterCardProps {
 
 export function CharacterCard({ character, index, onSelect }: CharacterCardProps) {
   const featured = character.featured || index % 7 === 0
+  const hasImage = Boolean(character.images && character.images.length > 0)
+  const rawRotation = character.rotation ?? 0
+  const rotation = hasImage ? 0 : Math.max(-2, Math.min(2, rawRotation))
+  const rawScale = character.scale ?? 1
+  const scale = hasImage ? 1 : Math.max(0.92, Math.min(1.1, rawScale))
 
   return (
     <motion.button
@@ -43,16 +48,32 @@ export function CharacterCard({ character, index, onSelect }: CharacterCardProps
 
       <div className="mt-6 grid gap-4 md:gap-6 grid-cols-[minmax(6.5rem,8.5rem)_minmax(0,1fr)] items-end">
         <div className="collection-display text-[5.5rem] leading-none text-[color:var(--accent)] md:text-[7.5rem] transition-transform duration-300 group-hover:scale-105 origin-bottom-left flex items-center justify-center">
-          <div
-            style={{
-              fontFamily: character.fontFamily || 'inherit',
-              transform: `rotate(${character.rotation || 0}deg) scale(${character.scale || 1})`,
-              fontWeight: character.fontWeight || 'normal',
-              fontStyle: character.italic ? 'italic' : 'normal',
-            }}
-          >
-            {character.char}
-          </div>
+          {character.images && character.images.length > 0 ? (
+            <div className="ip-char-frame">
+              <img
+                src={character.images[0]}
+                alt={`${character.char} 艺术字`}
+                loading="lazy"
+                style={{
+                  transform: `rotate(${rotation}deg) scale(${scale})`,
+                  transformOrigin: '50% 50%',
+                }}
+                className="ip-char-image"
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                fontFamily: character.fontFamily || 'inherit',
+                transform: `rotate(${rotation}deg) scale(${scale})`,
+                transformOrigin: '50% 60%',
+                fontWeight: character.fontWeight || 'normal',
+                fontStyle: character.italic ? 'italic' : 'normal',
+              }}
+            >
+              {character.char}
+            </div>
+          )}
         </div>
         <div className="space-y-3 pb-2">
           <p className="text-sm tracking-[0.22em] text-[var(--ink-muted)]">

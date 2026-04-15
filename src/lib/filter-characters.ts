@@ -76,6 +76,13 @@ export const filterCharacters = (
         return right.score - left.score
       }
 
+      const leftPriority = left.character.priority ?? 0
+      const rightPriority = right.character.priority ?? 0
+
+      if (rightPriority !== leftPriority) {
+        return rightPriority - leftPriority
+      }
+
       if (left.character.featured !== right.character.featured) {
         return Number(right.character.featured) - Number(left.character.featured)
       }
