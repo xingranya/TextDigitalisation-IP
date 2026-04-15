@@ -1,8 +1,8 @@
-import { Home, Compass, ShoppingBag, User } from 'lucide-react'
+import { Home, Sparkles, ShoppingBag, User } from 'lucide-react'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
-export function MobileTabBar() {
+export function MobileTabBar({ onOpenAIChat }: { onOpenAIChat: () => void }) {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const showToast = (message: string) => {
@@ -16,7 +16,7 @@ export function MobileTabBar() {
     <>
       <nav 
         aria-label="移动端底部导航" 
-        className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t border-[var(--line-strong)] bg-[color:color-mix(in_oklab,var(--paper)_92%,transparent)] px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
+        className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t border-[var(--line-strong)] bg-[color:color-mix(in_oklab,var(--paper-strong)_92%,var(--paper))] px-2 pb-[env(safe-area-inset-bottom)] md:hidden"
       >
         <button 
           type="button" 
@@ -24,16 +24,16 @@ export function MobileTabBar() {
           className="flex flex-col items-center gap-1 p-2 text-[var(--accent-red)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] rounded-lg"
         >
           <Home aria-hidden="true" className="h-5 w-5" />
-          <span className="text-[0.65rem] font-medium tracking-widest">字库</span>
+          <span className="text-[0.75rem] font-medium tracking-[0.22em]">字库</span>
         </button>
         <button 
           type="button" 
-          aria-label="查看数字游览路线" 
-          onClick={() => showToast('数字游览路线规划中，敬请期待')} 
+          aria-label="打开 AI 问答" 
+          onClick={onOpenAIChat} 
           className="flex flex-col items-center gap-1 p-2 text-[var(--ink-muted)] hover:text-[var(--ink-strong)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] rounded-lg"
         >
-          <Compass aria-hidden="true" className="h-5 w-5" />
-          <span className="text-[0.65rem] font-medium tracking-widest">路线</span>
+          <Sparkles aria-hidden="true" className="h-5 w-5" />
+          <span className="text-[0.75rem] font-medium tracking-[0.22em]">问AI</span>
         </button>
         <button 
           type="button" 
@@ -42,7 +42,7 @@ export function MobileTabBar() {
           className="flex flex-col items-center gap-1 p-2 text-[var(--ink-muted)] hover:text-[var(--ink-strong)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] rounded-lg"
         >
           <ShoppingBag aria-hidden="true" className="h-5 w-5" />
-          <span className="text-[0.65rem] font-medium tracking-widest">文创</span>
+          <span className="text-[0.75rem] font-medium tracking-[0.22em]">文创</span>
         </button>
         <button 
           type="button" 
@@ -51,7 +51,7 @@ export function MobileTabBar() {
           className="flex flex-col items-center gap-1 p-2 text-[var(--ink-muted)] hover:text-[var(--ink-strong)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] rounded-lg"
         >
           <User aria-hidden="true" className="h-5 w-5" />
-          <span className="text-[0.65rem] font-medium tracking-widest">我的</span>
+          <span className="text-[0.75rem] font-medium tracking-[0.22em]">我的</span>
         </button>
       </nav>
 

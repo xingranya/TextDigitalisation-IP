@@ -1,9 +1,11 @@
 import type { CSSProperties } from 'react'
 import { MapPinned, Sparkles, X, Volume2, Share2, Box, ArrowRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { CharacterRecord } from '../types/character'
 import { jingchuCharacters } from '../data/characters'
+import { CharacterAIGuide } from './CharacterAIGuide'
 
 interface CharacterDetailModalProps {
   character: CharacterRecord
@@ -44,6 +46,10 @@ export function CharacterDetailModal({
   onSelect,
 }: CharacterDetailModalProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const dialogTitleId = useId()
+  const dialogDescriptionId = useId()
+  const dialogRef = useRef<HTMLElement | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null)
   const isTextLong = character.description.length > 120
   const hasImage = Boolean(character.images && character.images.length > 0)
   const rawRotation = character.rotation ?? 0
@@ -59,6 +65,59 @@ export function CharacterDetailModal({
     const fallbacks = jingchuCharacters.filter(item => item.id !== character.id && !related.find(r => r.id === item.id)).slice(0, 3 - related.length)
     related.push(...fallbacks)
   }
+
+  const focusableSelector = useMemo(
+    () =>
+      [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(','),
+    [],
+  )
+
+  useEffect(() => {
+    closeButtonRef.current?.focus()
+  }, [])
+
+  const handleDialogKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.key !== 'Tab') {
+      return
+    }
+
+    const container = dialogRef.current
+    if (!container) {
+      return
+    }
+
+    const focusable = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+      (element) => !element.hasAttribute('disabled') && element.tabIndex !== -1,
+    )
+
+    if (focusable.length === 0) {
+      event.preventDefault()
+      return
+    }
+
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    const active = document.activeElement as HTMLElement | null
+
+    if (!event.shiftKey && active === last) {
+      event.preventDefault()
+      first.focus()
+      return
+    }
+
+    if (event.shiftKey && active === first) {
+      event.preventDefault()
+      last.focus()
+    }
+  }
+
   return (
     <>
       <motion.button
@@ -77,6 +136,15 @@ export function CharacterDetailModal({
           layoutId={`card-${character.id}`}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           style={{ '--accent': character.accent } as CSSProperties}
+          ref={(node) => {
+            dialogRef.current = node
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={dialogTitleId}
+          aria-describedby={dialogDescriptionId}
+          tabIndex={-1}
+          onKeyDown={handleDialogKeyDown}
           className="detail-modal detail-scroll max-h-[92vh] w-full max-w-6xl overflow-y-auto bg-[var(--paper-strong)]"
         >
           <div className="grid min-h-full gap-0 lg:grid-cols-[minmax(20rem,0.94fr)_minmax(0,1.06fr)]">
@@ -120,7 +188,7 @@ export function CharacterDetailModal({
                   <button 
                     type="button" 
                     aria-label="播放读音" 
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] bg-[color:color-mix(in_oklab,var(--paper)_10%,transparent)] text-[var(--paper)] transition hover:bg-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--paper)]"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] bg-[color:color-mix(in_oklab,var(--paper)_10%,transparent)] text-[var(--paper)] transition hover:bg-[color:color-mix(in_oklab,var(--paper)_20%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--paper)]"
                   >
                     <Volume2 aria-hidden="true" className="h-4 w-4" />
                   </button>
@@ -151,6 +219,7 @@ export function CharacterDetailModal({
                   type="button"
                   aria-label="关闭详情"
                   onClick={onClose}
+                  ref={closeButtonRef}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-soft)] transition duration-300 hover:border-[var(--accent-red)] hover:text-[var(--ink-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
                 >
                   <X aria-hidden="true" className="h-5 w-5" />
@@ -165,7 +234,9 @@ export function CharacterDetailModal({
               >
                 <div className="section-kicker">字形详情</div>
                 <div>
-                  <h2 className="text-3xl text-[var(--ink-strong)] md:text-4xl">{character.title}</h2>
+                  <h2 id={dialogTitleId} className="text-3xl text-[var(--ink-strong)] md:text-4xl">
+                    {character.title}
+                  </h2>
                   <p className="mt-3 text-base leading-8 text-[var(--ink-soft)]">{character.summary}</p>
                 </div>
               </motion.div>
@@ -192,6 +263,14 @@ export function CharacterDetailModal({
                 </div>
               </motion.div>
 
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <CharacterAIGuide character={character} />
+              </motion.div>
+
               <motion.article 
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -200,7 +279,10 @@ export function CharacterDetailModal({
               >
                 <div className="section-kicker">文化介绍</div>
                 <div className="relative">
-                  <div className={`max-w-[42rem] text-base leading-8 text-[var(--ink-soft)] whitespace-pre-line transition-all duration-300 ${!isExpanded && isTextLong ? 'line-clamp-6' : ''}`}>
+                  <div
+                    id={dialogDescriptionId}
+                    className={`max-w-[42rem] text-base leading-8 text-[var(--ink-soft)] whitespace-pre-line transition-all duration-300 ${!isExpanded && isTextLong ? 'line-clamp-6' : ''}`}
+                  >
                     {character.description}
                   </div>
                   {!isExpanded && isTextLong && (

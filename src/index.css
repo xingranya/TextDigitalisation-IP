@@ -423,6 +423,11 @@
     --paper: oklch(0.975 0.01 82);
   }
 
+  body::after {
+    filter: blur(34px);
+    opacity: 0.22;
+  }
+
   .ip-char-image {
     height: 5.5rem;
   }

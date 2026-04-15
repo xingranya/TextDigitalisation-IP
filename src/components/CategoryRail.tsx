@@ -19,7 +19,7 @@ export function CategoryRail({
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        className="paper-panel sticky top-4 z-20 flex flex-wrap gap-2 p-3 backdrop-blur-md"
+        className="paper-panel detail-scroll sticky top-3 z-20 flex flex-nowrap gap-2 overflow-x-auto p-3 md:top-4"
       >
         {categories.map((category) => {
           const isActive = activeCategory === category

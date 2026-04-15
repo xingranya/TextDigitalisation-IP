@@ -9,6 +9,7 @@ interface SearchHeroProps {
   keywordSuggestions: string[]
   onQueryChange: (value: string) => void
   onKeywordSelect: (value: string) => void
+  onOpenAIChat: () => void
 }
 
 const revealTransition = {
@@ -23,6 +24,7 @@ export function SearchHero({
   keywordSuggestions,
   onQueryChange,
   onKeywordSelect,
+  onOpenAIChat,
 }: SearchHeroProps) {
   const [inputValue, setInputValue] = useState(query)
 
@@ -90,6 +92,14 @@ export function SearchHero({
                 {item}
               </button>
             ))}
+            <button
+              type="button"
+              className="keyword-chip border-[color:color-mix(in_oklab,var(--accent-bronze)_35%,var(--line-strong))] bg-[color:color-mix(in_oklab,var(--accent-bronze)_10%,var(--paper))] text-[var(--ink-strong)] hover:border-[var(--accent-bronze)] hover:text-[var(--accent-bronze)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
+              onClick={onOpenAIChat}
+              aria-label="打开 AI 问答"
+            >
+              问 AI
+            </button>
           </div>
         </div>
       </motion.div>

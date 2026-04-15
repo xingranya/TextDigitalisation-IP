@@ -14,6 +14,7 @@ import { CharacterCard } from './components/CharacterCard'
 import { CharacterDetailModal } from './components/CharacterDetailModal'
 import { MobileTabBar } from './components/MobileTabBar'
 import { Footer } from './components/Footer'
+import { AIChatSheet } from './components/AIChatSheet'
 import { jingchuCharacters } from './data/characters'
 import { filterCharacters } from './lib/filter-characters'
 import { readBrowserState, writeBrowserState } from './lib/url-state'
@@ -24,6 +25,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState(initialState.query)
   const [activeCategory, setActiveCategory] = useState(initialState.category)
   const [selectedId, setSelectedId] = useState<string | null>(initialState.selectedId)
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false)
   const [isOffline, setIsOffline] = useState(!navigator.onLine)
   const searchTimeoutRef = useRef<number | null>(null)
 
@@ -79,19 +81,20 @@ function App() {
   const handleEscape = useEffectEvent((event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       setSelectedId(null)
+      setIsAIChatOpen(false)
     }
   })
 
   useEffect(() => {
-    document.body.style.overflow = selectedCharacter ? 'hidden' : 'auto'
+    document.body.style.overflow = selectedCharacter || isAIChatOpen ? 'hidden' : 'auto'
 
     return () => {
       document.body.style.overflow = 'auto'
     }
-  }, [selectedCharacter])
+  }, [selectedCharacter, isAIChatOpen])
 
   useEffect(() => {
-    if (!selectedCharacter) {
+    if (!selectedCharacter && !isAIChatOpen) {
       return
     }
 
@@ -104,7 +107,7 @@ function App() {
     return () => {
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [selectedCharacter])
+  }, [selectedCharacter, isAIChatOpen])
 
   useEffect(() => {
     writeBrowserState({
@@ -136,6 +139,22 @@ function App() {
     })
   }
 
+  const handleOpenAIChat = () => {
+    setIsAIChatOpen(true)
+  }
+
+  const handleCloseAIChat = () => {
+    setIsAIChatOpen(false)
+  }
+
+  const handlePickCharacterFromAI = (char: string) => {
+    const match = jingchuCharacters.find((item) => item.char === char)
+    if (!match) {
+      return
+    }
+    setSelectedId(match.id)
+  }
+
   return (
     <div className="min-h-screen pb-24 md:pb-0">
       <AnimatePresence>
@@ -159,6 +178,7 @@ function App() {
         keywordSuggestions={keywordSuggestions}
         onQueryChange={handleQueryChange}
         onKeywordSelect={handleKeywordSelect}
+        onOpenAIChat={handleOpenAIChat}
       />
 
       <CategoryRail
@@ -301,8 +321,14 @@ function App() {
           />
         ) : null}
       </AnimatePresence>
+      <AIChatSheet
+        isOpen={isAIChatOpen}
+        onClose={handleCloseAIChat}
+        characters={jingchuCharacters}
+        onPickCharacter={handlePickCharacterFromAI}
+      />
       <Footer />
-      <MobileTabBar />
+      <MobileTabBar onOpenAIChat={handleOpenAIChat} />
     </div>
   )
 }
