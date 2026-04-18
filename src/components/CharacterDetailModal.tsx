@@ -54,7 +54,8 @@ export function CharacterDetailModal({
   pushToast,
 }: CharacterDetailModalProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [isSpeaking, setIsSpeaking] = useState(false)
+  const [speakingCharId, setSpeakingCharId] = useState<string | null>(null)
+  const isSpeaking = speakingCharId === character.id
   const dialogTitleId = useId()
   const dialogDescriptionId = useId()
   const dialogRef = useRef<HTMLElement | null>(null)
@@ -112,7 +113,6 @@ export function CharacterDetailModal({
       return
     }
     window.speechSynthesis.cancel()
-    setIsSpeaking(false)
   }, [character.id, speechSupported])
 
   const handleSpeak = () => {
@@ -123,7 +123,7 @@ export function CharacterDetailModal({
 
     if (isSpeaking) {
       window.speechSynthesis.cancel()
-      setIsSpeaking(false)
+      setSpeakingCharId(null)
       return
     }
 
@@ -131,15 +131,15 @@ export function CharacterDetailModal({
     utterance.lang = 'zh-CN'
     utterance.rate = 0.9
     utterance.onend = () => {
-      setIsSpeaking(false)
+      setSpeakingCharId(null)
     }
     utterance.onerror = () => {
-      setIsSpeaking(false)
+      setSpeakingCharId(null)
       pushToast('语音朗读失败，请稍后再试')
     }
     window.speechSynthesis.cancel()
     window.speechSynthesis.speak(utterance)
-    setIsSpeaking(true)
+    setSpeakingCharId(character.id)
   }
 
   const getShareUrl = () => {
@@ -155,14 +155,16 @@ export function CharacterDetailModal({
 
     if (typeof navigator !== 'undefined' && 'share' in navigator) {
       try {
-        await (navigator as Navigator & { share: (data: any) => Promise<void> }).share({
+        await (navigator as Navigator & { share: (data: ShareData) => Promise<void> }).share({
           title,
           text,
           url,
         })
         pushToast('已打开系统分享面板')
         return
-      } catch {}
+      } catch (error) {
+        void error
+      }
     }
 
     try {
