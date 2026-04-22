@@ -530,6 +530,19 @@
   }
 }
 
+@media (hover: none) and (pointer: coarse) {
+  body::before,
+  body::after,
+  .collection-card::before {
+    content: none;
+  }
+
+  .ip-char-image,
+  .ip-char-hero-image {
+    filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
